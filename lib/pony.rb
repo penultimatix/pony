@@ -200,6 +200,7 @@ module Pony
       :attachments,
       :body,
       :charset,
+      :content_transfer_encoding,
       :enable_starttls_auto,
       :headers,
       :html_body,
@@ -259,6 +260,7 @@ module Pony
     add_attachments(mail, options[:attachments]) if options[:attachments]
 
     mail.charset = options[:charset] if options[:charset] # charset must be set after setting content_type
+    mail.content_transfer_encoding = options[:content_transfer_encoding] if options[:content_transfer_encoding]
 
     if mail.multipart? && options[:text_part_charset]
       mail.text_part.charset = options[:text_part_charset]
@@ -288,6 +290,8 @@ module Pony
 
   def self.add_attachments(mail, attachments)
     attachments.each do |name, body|
+      name = name.gsub /\s+/, ' '
+
       # mime-types wants to send these as "quoted-printable"
       if name =~ /\.xlsx$/
         mail.attachments[name] = {
