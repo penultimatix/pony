@@ -200,7 +200,6 @@ module Pony
       :attachments,
       :body,
       :charset,
-      :content_transfer_encoding,
       :enable_starttls_auto,
       :headers,
       :html_body,
@@ -261,7 +260,6 @@ module Pony
     add_attachments(mail, options[:attachments]) if options[:attachments]
 
     mail.charset = options[:charset] if options[:charset] # charset must be set after setting content_type
-    mail.content_transfer_encoding = options[:content_transfer_encoding] if options[:content_transfer_encoding]
 
     if mail.multipart? && options[:text_part_charset]
       mail.text_part.charset = options[:text_part_charset]
