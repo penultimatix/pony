@@ -271,10 +271,9 @@ module Pony
   end
 
   def self.build_html_part(options)
-    Mail::Part.new do
-      content_type 'text/html; charset=UTF-8'
+    Mail::Part.new(:content_type => 'text/html;charset=UTF-8') do
       content_transfer_encoding 'quoted-printable'
-      body options[:html_body]
+      body Mail::Encodings::QuotedPrintable.encode(options[:html_body])
       if options[:html_body_part_header] && options[:html_body_part_header].is_a?(Hash)
         options[:html_body_part_header].each do |k,v|
           header[k] = v
