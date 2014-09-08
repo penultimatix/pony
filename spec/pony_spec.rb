@@ -310,7 +310,6 @@ describe Pony do
         )
       end
 
-#      it { expect(mail.parts.length).to eq 3 }
       it { expect(mail.parts.length).to eq 2 }
       it { expect(mail.parts[0].parts.length).to eq 2 }
       it { expect(mail.content_type.to_s).to include( 'multipart/mixed' ) }
