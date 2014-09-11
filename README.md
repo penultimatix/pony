@@ -177,6 +177,7 @@ https://groups.google.com/forum/#!forum/ponyrb
 *  Cameron Matheson  [@cmatheson](https://github.com/cmatheson)
 *  Carl Hörberg  [@carlhoerberg](https://github.com/carlhoerberg)
 *  Daniel Lopes  [@danielvlopes](https://github.com/danielvlopes)
+*  Doug Hammond  [@dslh](https://github.com/dslh)
 *  Hiroshi Saito  [@hiroshi](https://github.com/hiroshi)
 *  Kalin Harvey
 *  MIKAMI Yoshiyuki  [@yoshuki](https://github.com/yoshuki)
@@ -196,6 +197,9 @@ https://groups.google.com/forum/#!forum/ponyrb
 *  rohit  [@rohit](https://github.com/rohit)
 
 ## Changelog ##
+
+#### 1.11 ####
+* Improved handling of mails with both text and html bodies and attachments
 
 #### 1.10 ####
 * Add ```subject_prefix```, ```append_options``` and ```override_options```
