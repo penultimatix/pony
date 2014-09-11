@@ -222,29 +222,30 @@ module Pony
         m.send(k, v)
       end
 
-      if options[:html_body]
-        html_part do
-          content_type 'text/html; charset=UTF-8'
-          body options[:html_body]
-          if options[:html_body_part_header] && options[:html_body_part_header].is_a?(Hash)
-            options[:html_body_part_header].each do |k,v|
-              header[k] = v
-            end
-          end
+      # Automatic handling of multipart messages in the underlying
+      # mail library works pretty well for the most part, but in
+      # the case where we have attachments AND text AND html bodies
+      # we need to explicitly define a second multipart/alternative
+      # boundary to encapsulate the body-parts within the
+      # multipart/mixed boundary that will be created automatically.
+      if options[:attachments] && options[:html_body] && options[:body]
+        part(:content_type => 'multipart/alternative') do |p|
+          p.html_part = Pony.build_html_part(options)
+          p.text_part = Pony.build_text_part(options)
         end
-      end
 
-      # If we're using attachments, the body needs to be a separate
-      # part. If not, we can just set the body directly.
-      if options[:body] && (options[:html_body] || options[:attachments])
-        text_part do
-          body options[:body]
-          if options[:body_part_header] && options[:body_part_header].is_a?(Hash)
-            options[:body_part_header].each do |k,v|
-              header[k] = v
-            end
-          end
+      # Otherwise if there is more than one part we still need to
+      # ensure that they are all declared to be separate.
+      elsif options[:html_body] || options[:attachments]
+        if options[:html_body]
+          m.html_part = Pony.build_html_part(options)
         end
+
+        if options[:body]
+          m.text_part = Pony.build_text_part(options)
+        end
+
+      # If all we have is a text body, we don't need to worry about parts.
       elsif options[:body]
         body options[:body]
       end
@@ -265,6 +266,30 @@ module Pony
     end
     set_content_type(mail, options[:content_type])
     mail
+  end
+
+  def self.build_html_part(options)
+    Mail::Part.new(:content_type => 'text/html;charset=UTF-8') do
+      content_transfer_encoding 'quoted-printable'
+      body Mail::Encodings::QuotedPrintable.encode(options[:html_body])
+      if options[:html_body_part_header] && options[:html_body_part_header].is_a?(Hash)
+        options[:html_body_part_header].each do |k,v|
+          header[k] = v
+        end
+      end
+    end
+  end
+
+  def self.build_text_part(options)
+    Mail::Part.new(:content_type => 'text/plain') do
+      content_type options[:charset] if options[:charset]
+      body options[:body]
+      if options[:body_part_header] && options[:body_part_header].is_a?(Hash)
+        options[:body_part_header].each do |k,v|
+          header[k] = v
+        end
+      end
+    end
   end
 
   def self.set_content_type(mail, user_content_type)
@@ -288,6 +313,8 @@ module Pony
 
   def self.add_attachments(mail, attachments)
     attachments.each do |name, body|
+      name = name.gsub /\s+/, ' '
+
       # mime-types wants to send these as "quoted-printable"
       if name =~ /\.xlsx$/
         mail.attachments[name] = {

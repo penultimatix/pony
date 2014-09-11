@@ -310,11 +310,13 @@ describe Pony do
         )
       end
 
-      it { expect(mail.parts.length).to eq 3 }
+      it { expect(mail.parts.length).to eq 2 }
+      it { expect(mail.parts[0].parts.length).to eq 2 }
       it { expect(mail.content_type.to_s).to include( 'multipart/mixed' ) }
-      it { expect(mail.parts[0].to_s).to include( 'Content-Type: text/html' ) }
+      it { expect(mail.parts[0].content_type.to_s).to include( 'multipart/alternative' ) }
+      it { expect(mail.parts[0].parts[0].to_s).to include( 'Content-Type: text/html' ) }
+      it { expect(mail.parts[0].parts[1].to_s).to include( 'Content-Type: text/plain' ) }
       it { expect(mail.parts[1].to_s).to include( 'Content-Type: text/plain' ) }
-      it { expect(mail.parts[2].to_s).to include( 'Content-Type: text/plain' ) }
     end
   end
 
@@ -329,8 +331,8 @@ describe Pony do
       )
     end
 
-    it { expect(mail.parts[0].to_s).to include( 'inline' ) }
-    it { expect(mail.parts[1].to_s).to include( 'inline' ) }
+    it { expect(mail.parts[0].parts[0].to_s).to include( 'inline' ) }
+    it { expect(mail.parts[0].parts[1].to_s).to include( 'inline' ) }
 
     context "when parts aren't present" do
       subject(:mail) do
