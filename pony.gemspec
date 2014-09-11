@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.homepage = 'http://github.com/benprew/pony'
   s.license = 'MIT'
 
-  s.files = ["README.rdoc", "Rakefile", "pony.gemspec" ] + Dir.glob("{lib,spec}/**/*")
+  s.files = ["README.md", "Rakefile", "pony.gemspec" ] + Dir.glob("{lib,spec}/**/*")
   s.rdoc_options = ["--inline-source", "--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.add_runtime_dependency 'mail', '>= 2.0'
